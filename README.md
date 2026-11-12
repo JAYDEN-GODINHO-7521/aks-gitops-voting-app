@@ -1,50 +1,49 @@
-# Example Voting App
+# End-to-End GitOps Deployment on Azure Kubernetes Service (AKS)
 
-A simple distributed application running across multiple Docker containers.
+## Overview
+This repository demonstrates an enterprise-grade, GitOps-driven CI/CD architecture deploying a multi-tier polyglot microservices application onto **Azure Kubernetes Service (AKS)**. 
 
-## Getting started
+> **Attribution:** The underlying voting application source code is adapted from the official [Docker Example Voting App](https://github.com/dockersamples/example-voting-app). My work in this repository focuses on cloud infrastructure provisioning, Kubernetes orchestration, CI automation, and declarative Continuous Deployment using **Argo CD**.
 
-Download [Docker Desktop](https://www.docker.com/products/docker-desktop) for Mac or Windows. [Docker Compose](https://docs.docker.com/compose) will be automatically installed. On Linux, make sure you have the latest version of [Compose](https://docs.docker.com/compose/install/).
+---
 
-This solution uses Python, Node.js, .NET, with Redis for messaging and Postgres for storage.
+## System & Deployment Architecture
 
-Run in this directory to build and run the app:
+### Application Stack
+* **Vote Frontend (Python / Flask):** Web interface allowing users to cast votes between two options.
+* **Message Queue (Redis):** In-memory data store queuing incoming votes.
+* **Background Worker (.NET):** Consumes queued votes from Redis and persists them to the database.
+* **Database (PostgreSQL):** Stores persistent vote records backed by Kubernetes PersistentVolumes.
+* **Results Dashboard (Node.js):** Real-time web interface displaying live voting results via WebSockets.
 
-```shell
-docker compose up
+### Cloud & DevOps Infrastructure (My Contributions)
+* **Compute & Orchestration:** Deployed on **Azure Kubernetes Service (AKS)** backed by **Azure Virtual Machine Scale Sets (VMSS)** for scalable node pools.
+* **Continuous Integration (CI):** Automated container image builds and registry pushes triggered on code/manifest changes (via GitHub Actions / Azure Pipelines).
+* **GitOps Continuous Deployment (CD):** Configured **Argo CD** inside the AKS cluster to continuously monitor this repository and automatically synchronize Kubernetes manifests (`Deployment`, `Service`, `PersistentVolumeClaim`) whenever declarative state changes occur.
+
+---
+
+## Repository Structure
+
+```text
+├── vote/                 # Python voting frontend source & Dockerfile
+├── result/               # Node.js results frontend source & Dockerfile
+├── worker/               # .NET background worker source & Dockerfile
+├── k8s-specifications/   # Kubernetes manifests tracked by Argo CD
+└── .github/workflows/    # CI pipeline definitions (update path to match your setup)
 ```
+## Deployment Workflow
+1. Cluster Provisioning: Provisioned an AKS cluster on Azure configured with VMSS-backed node pools and configured kubectl context.
 
-The `vote` app will be running at [http://localhost:8080](http://localhost:8080), and the `results` will be at [http://localhost:8081](http://localhost:8081).
+2. Argo CD Bootstrap: Installed Argo CD into the argocd namespace and exposed the Argo CD API server to manage cluster state.
 
-Alternately, if you want to run it on a [Docker Swarm](https://docs.docker.com/engine/swarm/), first make sure you have a swarm. If you don't, run:
+3. CI Execution: Code updates trigger the CI pipeline to build updated Docker images, tag them, and push them to the container registry.
 
-```shell
-docker swarm init
-```
+4. GitOps Sync (CD): Argo CD detects updated manifests/image tags in the target directory and reconciles the live AKS cluster state with zero manual kubectl apply interventions.
 
-Once you have your swarm, in this directory run:
-
-```shell
-docker stack deploy --compose-file docker-stack.yml vote
-```
-
-## Run the app in Kubernetes
-
-The folder k8s-specifications contains the YAML specifications of the Voting App's services.
-
-Run the following command to create the deployments and services. Note it will create these resources in your current namespace (`default` if you haven't changed it.)
-
-```shell
-kubectl create -f k8s-specifications/
-```
-
-The `vote` web app is then available on port 31000 on each host of the cluster, the `result` web app is available on port 31001.
-
-To remove them, run:
-
-```shell
-kubectl delete -f k8s-specifications/
-```
+![Argo CD Sync Status](docs/ArgoCD-Dashboard.png)
+![AzureCICD](docs/AzureCICD.png)
+![Updated deployment.yaml](docs/Updated-deployment.png)
 
 ## Architecture
 
