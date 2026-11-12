@@ -1,7 +1,7 @@
 # End-to-End GitOps Deployment on Azure Kubernetes Service (AKS)
 
 ## Overview
-This repository demonstrates an enterprise-grade, GitOps-driven CI/CD architecture deploying a multi-tier polyglot microservices application onto **Azure Kubernetes Service (AKS)**. 
+This repository demonstrates GitOps-driven CI/CD architecture deploying a multi-tier polyglot microservices application onto **Azure Kubernetes Service (AKS)**. 
 
 > **Attribution:** The underlying voting application source code is adapted from the official [Docker Example Voting App](https://github.com/dockersamples/example-voting-app). My work in this repository focuses on cloud infrastructure provisioning, Kubernetes orchestration, CI automation, and declarative Continuous Deployment using **Argo CD**.
 
