@@ -18,20 +18,11 @@ This repository demonstrates an enterprise-grade, GitOps-driven CI/CD architectu
 
 ### Cloud & DevOps Infrastructure (My Contributions)
 * **Compute & Orchestration:** Deployed on **Azure Kubernetes Service (AKS)** backed by **Azure Virtual Machine Scale Sets (VMSS)** for scalable node pools.
-* **Continuous Integration (CI):** Automated container image builds and registry pushes triggered on code/manifest changes (via GitHub Actions / Azure Pipelines).
+* **Continuous Integration (CI):** Automated container image builds and registry pushes triggered on code/manifest changes (Azure Pipelines).
 * **GitOps Continuous Deployment (CD):** Configured **Argo CD** inside the AKS cluster to continuously monitor this repository and automatically synchronize Kubernetes manifests (`Deployment`, `Service`, `PersistentVolumeClaim`) whenever declarative state changes occur.
 
 ---
 
-## Repository Structure
-
-```text
-├── vote/                 # Python voting frontend source & Dockerfile
-├── result/               # Node.js results frontend source & Dockerfile
-├── worker/               # .NET background worker source & Dockerfile
-├── k8s-specifications/   # Kubernetes manifests tracked by Argo CD
-└── .github/workflows/    # CI pipeline definitions (update path to match your setup)
-```
 ## Deployment Workflow
 1. Cluster Provisioning: Provisioned an AKS cluster on Azure configured with VMSS-backed node pools and configured kubectl context.
 
